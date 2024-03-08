@@ -1,0 +1,9 @@
+include "./Telegraf.tessla"
+
+@TelegrafIn("amqp_consumer","host=ThinkPad-T450s", "fields_t1")
+in temp: Events[Float]
+
+def outOfRange := (temp <. 18.0) || (temp >. 35.0)
+
+@TelegrafOut("out_of_range")
+out outOfRange
