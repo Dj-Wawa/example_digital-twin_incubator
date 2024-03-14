@@ -1,9 +1,15 @@
 include "./Telegraf.tessla"
 
-@TelegrafIn("amqp_consumer","host=ThinkPad-T450s", "fields_t1")
-in temp: Events[Float]
+@TelegrafIn("amqp_consumer","host=ThinkPad-T450s", "lid_open")
+in lid: Events[Bool]
 
-def outOfRange := (temp <. 18.0) || (temp >. 35.0)
+@TelegrafIn("amqp_consumer","host=ThinkPad-T450s", "energy_saver_on")
+in energy_saver: Events[Bool] 
 
-@TelegrafOut("out_of_range")
-out outOfRange
+def delayedOpen = raisingDelay(lid, 3) 
+def critical = lid && delayedOpen 
+def alarm = critical && !energy_saver 
+
+@TelegrafOut("alert") 
+out alarm
+def raisingDelay(e: Events[Bool], d: Int): Events[Bool] = merge3(false, const(true, delay(const(d, boolFilter(e)), e)), const(false, falling(e)))
