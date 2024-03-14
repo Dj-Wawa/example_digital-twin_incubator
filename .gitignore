@@ -12,3 +12,7 @@ venv/
 *.log
 /software/startup.conf
 *.drawio.dtmp
+.venv/
+incubator/digital_twin/data_access/influxdbserver/influxdb/engine/
+incubator/tessla/outputRustProject/
+incubator/tessla/annotation.json
